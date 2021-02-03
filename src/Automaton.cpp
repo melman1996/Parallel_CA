@@ -43,6 +43,7 @@ bool Automaton::evolve()
 {
 	bool result = false;
 	copyToPreviousStep();
+#pragma omp parallel for
 	for (int i = 0; i < size; i++) {
 		if (currentStep[i].get() == 0) {
 			currentStep[i].set(calculateNewState(i));
@@ -182,33 +183,40 @@ void Automaton::MonteCarlo(int iterations, double kt)
 
 void Automaton::MonteCarlo(double kt)
 {
-	std::vector<int> cells;
+	int nothreads = omp_get_max_threads();
+	int chunk = ceil(size / nothreads);
+#pragma omp parallel for
+	for (int start = 0; start < size; start += chunk) {
+		int end = start + chunk;
+		if (end > size) end = size;
 
-	for (int i = 0; i < size; i++) {
-		cells.push_back(i);
-	}
-	std::shuffle(cells.begin(), cells.end(), std::mt19937{ std::random_device{}() });
-
-	for (const auto& index : cells) {
-		const auto& neighbours = currentStep[index].getNeighbours();
-
-		int currentEnergy = calculateEnergy(index, currentStep[index].get());
-
-		std::vector<int> neighbourStates;
-
-		for (auto & i: neighbours) {
-			neighbourStates.push_back(currentStep[i].get());
+		std::vector<int> cells;
+		for (int i = start; i < end; i++) {
+			cells.push_back(i);
 		}
-		std::unique(neighbourStates.begin(), neighbourStates.end());
+		std::shuffle(cells.begin(), cells.end(), std::mt19937{ std::random_device{}() });
 
-		for (const auto& newState : neighbourStates) {
-			int alternateEnergy = calculateEnergy(index, newState);
-			if (currentEnergy >= alternateEnergy) {
-				currentStep[index].set(newState);
-				break;
+		for (const auto& index : cells) {
+			const auto& neighbours = currentStep[index].getNeighbours();
+
+			int currentEnergy = calculateEnergy(index, currentStep[index].get());
+
+			std::vector<int> neighbourStates;
+
+			for (auto& i : neighbours) {
+				neighbourStates.push_back(currentStep[i].get());
 			}
-			else {
+			std::unique(neighbourStates.begin(), neighbourStates.end());
 
+			for (const auto& newState : neighbourStates) {
+				int alternateEnergy = calculateEnergy(index, newState);
+				if (currentEnergy >= alternateEnergy) {
+					currentStep[index].set(newState);
+					break;
+				}
+				else {
+
+				}
 			}
 		}
 	}

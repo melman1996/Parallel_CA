@@ -6,6 +6,7 @@
 #include <random>
 #include <chrono>
 #include <list>
+#include <omp.h>
 
 #include "Cell.h"
 

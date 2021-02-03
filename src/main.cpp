@@ -1,10 +1,12 @@
-#include <iostream>
+﻿#include <iostream>
 #include <memory>
 #include <vector>
 #include <chrono>
 
 #include "Automaton.h"
 #include "FileIO.h"
+
+#include <omp.h>
 
 int main(int, char* []) {
 	auto start = std::chrono::high_resolution_clock::now();
