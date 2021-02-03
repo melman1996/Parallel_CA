@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Hello World!</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+        <link rel="stylesheet" href="../assets/stylesheets/index.css"/>
+    </head>
+    <body>
+        <div id="config">
+            <form id="config_form">
+                <div class="input_container">
+                    <label>Method:</label>
+                    <input name="method" type="text" value="Moore"/>
+                </div>
+                <div class="input_container">
+                    <label>Size X:</label>
+                    <input name="x_size" type="number" value="10"/>
+                </div>
+                <div class="input_container">
+                    <label>Size Y:</label>
+                    <input name="y_size" type="number" value="10"/>
+                </div>
+                <div class="input_container">
+                    <label>Size Z:</label>
+                    <input name="z_size" type="number" value="1"/>
+                </div>
+                <div class="input_container">
+                    <label>Seeds:</label>
+                    <input name="random_seeds" type="number" value="2"/>
+                </div>
+                <div class="input_container">
+                    <label>MC iterations:</label>
+                    <input name="MC_iterations" type="number" value="1"/>
+                </div>
+                <div class="input_container">
+                    <label>kT:</label>
+                    <input name="MC_kt" type="number" value="0.6"/>
+                </div>
+                <div class="input_container">
+                    <button id="addToQueueBtn" type="submit">Add to queue</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="configs">
+            <div id="queue">
+
+            </div>
+            <div id="separator"></div>
+            <div id="results">
+
+            </div>
+        </div>
+
+        <script src="index.js"></script>
+    </body>
+</html>
