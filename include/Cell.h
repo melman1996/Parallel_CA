@@ -4,14 +4,18 @@
 
 class Cell {
 private:
-	int id;
+	int id = 0;
 	std::vector<int> neighbours;
 public:
-	Cell();
+	Cell() = default;
+	Cell(const Cell& cell);
+
+	Cell& operator=(const Cell& cell);
+
 	void addNeighbour(int);
 
 	int get() const;
 	void set(int);
 
-	const std::vector<int>& const getNeighbours();
+	const std::vector<int>& getNeighbours() const;
 };

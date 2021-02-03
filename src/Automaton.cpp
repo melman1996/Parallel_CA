@@ -43,13 +43,17 @@ bool Automaton::evolve()
 {
 	bool result = false;
 	copyToPreviousStep();
-#pragma omp parallel for
-	for (int i = 0; i < size; i++) {
-		if (currentStep[i].get() == 0) {
-			currentStep[i].set(calculateNewState(i));
-			result = true;
+	std::for_each(
+		std::execution::par,
+		currentStep.begin(),
+		currentStep.end(),
+		[this, &result](auto&& item) {
+			if (item.get() == 0) {
+				item.set(calculateNewState(item));
+				result = true;
+			}
 		}
-	}
+	);
 	return result;
 }
 
@@ -77,6 +81,24 @@ int Automaton::calculateNewState(int index)
 	const auto& neighbours = currentStep[index].getNeighbours();
 	
 	for (auto & i : neighbours) {
+		if (previousStep[i] > 0) {
+			neighbourTypeCount[previousStep[i]]++;
+		}
+	}
+
+	int max_index = std::max_element(neighbourTypeCount.begin(), neighbourTypeCount.end()) - neighbourTypeCount.begin();
+	if (neighbourTypeCount[max_index] == 0) {//prevent returning weird index when every surrounding cell is empty
+		return 0;
+	}
+	return max_index;
+}
+
+int Automaton::calculateNewState(Cell& cell)
+{
+	std::vector<int> neighbourTypeCount(seedCount + 1);//0 will be dead
+	const auto& neighbours = cell.getNeighbours();
+
+	for (auto& i : neighbours) {
 		if (previousStep[i] > 0) {
 			neighbourTypeCount[previousStep[i]]++;
 		}
@@ -183,20 +205,18 @@ void Automaton::MonteCarlo(int iterations, double kt)
 
 void Automaton::MonteCarlo(double kt)
 {
-	int nothreads = omp_get_max_threads();
-	int chunk = ceil(size / nothreads);
-#pragma omp parallel for
-	for (int start = 0; start < size; start += chunk) {
-		int end = start + chunk;
-		if (end > size) end = size;
+	std::vector<int> cells;
 
-		std::vector<int> cells;
-		for (int i = start; i < end; i++) {
-			cells.push_back(i);
-		}
-		std::shuffle(cells.begin(), cells.end(), std::mt19937{ std::random_device{}() });
+	for (int i = 0; i < size; i++) {
+		cells.push_back(i);
+	}
+	std::shuffle(cells.begin(), cells.end(), std::mt19937{ std::random_device{}() });
 
-		for (const auto& index : cells) {
+	std::for_each(
+		std::execution::par,
+		cells.begin(),
+		cells.end(),
+		[this](auto&& index) {
 			const auto& neighbours = currentStep[index].getNeighbours();
 
 			int currentEnergy = calculateEnergy(index, currentStep[index].get());
@@ -218,8 +238,7 @@ void Automaton::MonteCarlo(double kt)
 
 				}
 			}
-		}
-	}
+		});
 }
 
 int Automaton::calculateEnergy(int index, int state)

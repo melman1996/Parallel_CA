@@ -6,7 +6,7 @@
 #include <random>
 #include <chrono>
 #include <list>
-#include <omp.h>
+#include <execution>
 
 #include "Cell.h"
 
@@ -35,6 +35,7 @@ private:
 	void VonNeumann(int, int, int, bool);
 
 	int calculateNewState(int);
+	int calculateNewState(Cell&);
 
 	int to1D(int, int, int);
 	void copyToPreviousStep();
