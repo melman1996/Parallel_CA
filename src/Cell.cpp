@@ -1,21 +1,12 @@
 #include "Cell.h"
 
-void Cell::addNeighbour(int index)
+Cell::Cell() : id(0)
 {
-	neighbours.push_back(index);
 }
 
-Cell::Cell(const Cell& cell)
+void Cell::addNeighbour(int i, int j, int k)
 {
-	id = cell.id;
-	neighbours = cell.neighbours;
-}
-
-Cell& Cell::operator=(const Cell& cell)
-{
-	id = cell.id;
-	neighbours = cell.neighbours;
-	return *this;
+	neighbours.push_back(std::make_tuple(i, j, k));
 }
 
 int Cell::get() const
@@ -28,7 +19,7 @@ void Cell::set(int newId)
 	id = newId;
 }
 
-const std::vector<int>& Cell::getNeighbours() const
+const std::vector<std::tuple<int, int, int>>& const Cell::getNeighbours()
 {
 	return neighbours;
 }

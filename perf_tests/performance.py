@@ -10,7 +10,7 @@ periodic = ["yes"]
 methods = ["Moore"]
 sizes = [20, 30, 40, 50, 100]
 no_seeds = [10, 100, 1000]
-mc_count = [1, 10]
+mc_count = [1]
 mc_kts = [0.6]
 
 def create_config(periodic, method, size, seeds, mc_iterations, mc_kt):
@@ -28,7 +28,7 @@ def perform_test(periodic, method, size, seeds, mc_iterations, mc_kt):
     current_path = pathlib.Path().absolute()
     os.chdir(EXE_PATH)
     create_config(periodic, method, size, seeds, mc_iterations, mc_kt)
-    os.system("CellularAutomaton.exe > time.txt")
+    os.system("mpiexec.exe -n 6 ./CellularAutomaton.exe > time.txt")
     os.chdir(current_path)
     file_suffix = "_{}_{}_{}_{}_{}_{}".format(periodic, method, size, seeds, mc_iterations, mc_kt)
     output_file = "{}\\time{}.txt".format(OUTPUT_DIR, file_suffix)

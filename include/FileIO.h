@@ -10,7 +10,7 @@
 #include "Utils.h"
 
 namespace FileIO {
-	int WriteBoardToFile(std::string, int, int, int, const std::vector<Cell>&);
+	int WriteBoardToFile(std::string, const std::vector<std::vector<std::vector<int>>>&);
 	std::vector<std::vector<std::vector<Cell>>> ReadBoardFromFile(std::string);
 
 	AutomatonConfig ReadConfig(std::string);

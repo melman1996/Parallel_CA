@@ -4,18 +4,14 @@
 
 class Cell {
 private:
-	int id = 0;
-	std::vector<int> neighbours;
+	int id;
+	std::vector<std::tuple<int, int, int>> neighbours;
 public:
-	Cell() = default;
-	Cell(const Cell& cell);
-
-	Cell& operator=(const Cell& cell);
-
-	void addNeighbour(int);
+	Cell();
+	void addNeighbour(int, int, int);
 
 	int get() const;
 	void set(int);
 
-	const std::vector<int>& getNeighbours() const;
+	const std::vector<std::tuple<int, int, int>>& const getNeighbours();
 };

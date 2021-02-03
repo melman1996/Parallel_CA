@@ -1,11 +1,19 @@
 #include "FileIO.h"
 
-int FileIO::WriteBoardToFile(std::string fileName, int x, int y, int z, const std::vector<Cell> &board) {//TODO: maybe use templates
+int FileIO::WriteBoardToFile(std::string fileName, const std::vector<std::vector<std::vector<int>>>& board) {//TODO: maybe use templates	int FileIO::WriteBoardToFile(std::string fileName, int x, int y, int z, const std::vector<Cell> &board) {//TODO: maybe use templates
+	int x = board.size(); //TODO: wrong asssumption that vectors are not empty	
+	int y = board[0].size();
+	int z = board[0][0].size();
+
 	std::fstream file;
 	file.open(fileName, std::ios::out);
 	file << x << "x" << y << "x" << z << std::endl;
-	for (int i = 0; i < board.size(); i++) {
-		file << board[i].get() << ",";
+	for (int i = 0; i < x; i++) {
+		for (int j = 0; j < y; j++) {
+			for (int k = 0; k < z; k++) {
+				file << board[i][j][k] << ",";
+			}
+		}
 	}
 	file.close();
 	return 0;
@@ -70,6 +78,7 @@ AutomatonConfig FileIO::ReadConfig(std::string fileName) {
 		}
 		else if (splitLine[0] == "random_seeds") {
 			config.randomSeeds = std::stoi(splitLine[1]);
+			config.overallSeeds = std::stoi(splitLine[1]);
 		}
 		else if (splitLine[0] == "MC_iterations") {
 			config.monteCarloIterationsCount = std::stoi(splitLine[1]);

@@ -106,7 +106,7 @@ function simulation(){
     isRunning = true;
 
     createConfigFile(configQueue[0]);
-    child.execFile('CellularAutomaton.exe', async function(err, data){
+    child.exec('mpiexec.exe -n 6 .\\CellularAutomaton.exe', async function(err, data){
         if(err){
             console.error(err);
             return;
